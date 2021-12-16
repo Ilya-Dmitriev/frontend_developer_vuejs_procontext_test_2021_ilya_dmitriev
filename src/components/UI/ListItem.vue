@@ -18,12 +18,9 @@ export default {
   },
   data() {
     return {
-      numValue: 0,
+      numValue: this.item.numValue,
       itemCheck: false,
     };
-  },
-  mounted() {
-    this.numValue = Math.round(Math.random() * 5);
   },
   watch: {
     "item.value"() {

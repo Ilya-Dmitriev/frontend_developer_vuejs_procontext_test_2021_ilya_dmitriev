@@ -1,5 +1,5 @@
 <template>
-  <details class="list">
+  <details class="list" :open="openList">
     <summary class="list_label">
       <input
         class="list_checkbox"
@@ -20,7 +20,7 @@
 
 <script>
 export default {
-  name: "list",
+  name: "list-control",
   props: {
     list: {
       type: Object,
@@ -29,6 +29,7 @@ export default {
   },
   data() {
     return {
+      openList: false,
       itemsValue: this.list.items.map(function () {
         return false;
       }),
@@ -39,6 +40,9 @@ export default {
       this.itemsValue[item.itemIndex] = item.value;
     },
     onChange(event) {
+      if (event.target.checked) {
+        this.openList = true;
+      }
       this.itemsValue.forEach((item, index, array) => {
         array[index] = event.target.checked;
       });

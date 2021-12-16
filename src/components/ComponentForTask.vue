@@ -1,19 +1,24 @@
 <template>
   <div class="task_wrapper">
     <div class="control_wrapper">
-      <list v-for="list in listInner" :list="list" :key="list.name">{{
+      <list-control v-for="list in listInner" :list="list" :key="list.name">{{
         list.name
-      }}</list>
+      }}</list-control>
     </div>
-    <div class="visual_wrapper"></div>
+    <div class="visual_wrapper">
+      <list-visual v-for="list in listInner" :list="list" :key="list.name">{{
+        list.name
+      }}</list-visual>
+    </div>
   </div>
 </template>
 
 <script>
-import List from "./List.vue";
+import ListControl from "./ListControl.vue";
+import ListVisual from "./ListVisual.vue";
 import { listInner } from "./mock/listInner.json";
 export default {
-  components: { List },
+  components: { ListControl, ListVisual },
   data() {
     return {
       listInner,
@@ -38,5 +43,8 @@ export default {
   .visual_wrapper {
     color: initial;
   }
+}
+.visual_wrapper {
+  padding: 1%;
 }
 </style>
