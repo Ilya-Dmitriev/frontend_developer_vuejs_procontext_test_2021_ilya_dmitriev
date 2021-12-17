@@ -1,18 +1,36 @@
 <template>
-  <details class="list" :open="openList">
+  <details class="list">
     <summary class="list_label">
       <input
         class="list_checkbox"
         type="checkbox"
-        v-model="someItemOn"
-        @change="onChange"
+        v-model="listChecked"
+        @change="onChange($event), stateToComponent()"
       /><slot></slot>
     </summary>
     <list-item
       v-for="(item, index) in this.list.items"
-      :item="{ ...item, value: itemsValue[index], itemIndex: index }"
+      :item="{
+        ...item,
+        value: itemsValue[index],
+        itemIndex: index,
+      }"
       :key="item.name"
-      @onCheck="childChecked"
+      @onCheck="childChecked($event)"
+      @onNumChange="
+        $emit('onNumChange', {
+          list: list.index,
+          item: $event.itemIndex,
+          numValue: $event.numValue,
+        })
+      "
+      @onColorChange="
+        $emit('onColorChange', {
+          list: list.index,
+          item: $event.itemIndex,
+          color: $event.color,
+        })
+      "
       >{{ item.name }}</list-item
     >
   </details>
@@ -29,15 +47,28 @@ export default {
   },
   data() {
     return {
-      openList: false,
+      listChecked: false,
       itemsValue: this.list.items.map(function () {
         return false;
       }),
     };
   },
   methods: {
+    stateToComponent() {
+      this.$emit("onListChecked", {
+        listChecked: this.listChecked,
+        list: this.list.index,
+      });
+    },
     childChecked(item) {
-      this.itemsValue[item.itemIndex] = item.value;
+      this.itemsValue[item.itemIndex] = item.checked;
+      this.listChecked = this.itemsValue.reduce((summ, item) => summ || item);
+      this.$emit("onItemChecked", {
+        list: this.list.index,
+        item: item.itemIndex,
+        checked: item.checked,
+      });
+      this.stateToComponent();
     },
     onChange(event) {
       if (event.target.checked) {
@@ -46,11 +77,6 @@ export default {
       this.itemsValue.forEach((item, index, array) => {
         array[index] = event.target.checked;
       });
-    },
-  },
-  computed: {
-    someItemOn() {
-      return this.itemsValue.reduce((summ, item) => summ || item);
     },
   },
 };

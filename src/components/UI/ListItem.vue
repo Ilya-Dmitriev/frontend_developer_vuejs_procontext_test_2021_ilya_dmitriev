@@ -1,9 +1,25 @@
 <template>
   <div class="list-item">
-    <input class="checkbox_input" type="checkbox" v-model="itemCheck" />
+    <input
+      class="checkbox_input"
+      type="checkbox"
+      v-model="itemCheck"
+      @change="onItemCheck"
+    />
     <slot></slot>
-    <input class="number_input" type="number" :value="numValue" />
-    <input class="color_input" type="color" :value="this.item.color" />
+    <input
+      class="number_input"
+      type="number"
+      min="0"
+      :value="numValue"
+      @change="onNumChange"
+    />
+    <input
+      class="color_input"
+      type="color"
+      :value="colorValue"
+      @change="onColorChange"
+    />
   </div>
 </template>
 
@@ -18,19 +34,37 @@ export default {
   },
   data() {
     return {
+      itemCheck: this.item.checked,
       numValue: this.item.numValue,
-      itemCheck: false,
+      colorValue: this.item.color,
     };
   },
-  watch: {
-    "item.value"() {
-      this.itemCheck = this.item.value;
-    },
-    itemCheck() {
+  methods: {
+    onItemCheck(event) {
       this.$emit("onCheck", {
         itemIndex: this.item.itemIndex,
-        value: this.itemCheck,
+        checked: event.target.checked,
       });
+    },
+    onColorChange(event) {
+      this.colorValue = event.target.value;
+      this.$emit("onColorChange", {
+        itemIndex: this.item.itemIndex,
+        color: this.colorValue,
+      });
+    },
+    onNumChange(event) {
+      this.numValue = event.target.value;
+      this.$emit("onNumChange", {
+        itemIndex: this.item.itemIndex,
+        numValue: this.numValue,
+      });
+    },
+  },
+  watch: {
+    "item.value"(value) {
+      this.itemCheck = value;
+      this.onItemCheck({ target: { checked: value } });
     },
   },
 };

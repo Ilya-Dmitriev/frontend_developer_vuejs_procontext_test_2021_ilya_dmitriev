@@ -2,7 +2,7 @@
   <div class="list-block">
     <slot></slot>
     <list-block
-      v-for="item in notEmptyItems"
+      v-for="item in vusibleItems"
       :item="item"
       :key="item.name"
     ></list-block>
@@ -19,8 +19,8 @@ export default {
     },
   },
   computed: {
-    notEmptyItems() {
-      return this.list.items.filter((item) => item.numValue);
+    vusibleItems() {
+      return this.list.items.filter((item) => item.check && !!item.numValue);
     },
   },
 };

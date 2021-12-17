@@ -1,12 +1,19 @@
 <template>
   <div class="task_wrapper">
     <div class="control_wrapper">
-      <list-control v-for="list in listInner" :list="list" :key="list.name">{{
-        list.name
-      }}</list-control>
+      <list-control
+        v-for="(list, index) in sessionlistInner"
+        :list="{ ...list, index: index }"
+        :key="list.name"
+        @onListChecked="onListChecked"
+        @onItemChecked="onItemChecked"
+        @onNumChange="onNumChange"
+        @onColorChange="onColorChange"
+        >{{ list.name }}</list-control
+      >
     </div>
     <div class="visual_wrapper">
-      <list-visual v-for="list in listInner" :list="list" :key="list.name">{{
+      <list-visual v-for="list in lists" :list="list" :key="list.name">{{
         list.name
       }}</list-visual>
     </div>
@@ -21,8 +28,35 @@ export default {
   components: { ListControl, ListVisual },
   data() {
     return {
-      listInner,
+      sessionlistInner: [],
     };
+  },
+  methods: {
+    onListChecked(event) {
+      this.sessionlistInner[event.list].check = event.listChecked;
+    },
+    onItemChecked(event) {
+      this.sessionlistInner[event.list].items[event.item].check = event.checked;
+    },
+    onNumChange(event) {
+      this.sessionlistInner[event.list].items[event.item].numValue =
+        event.numValue;
+    },
+    onColorChange(event) {
+      this.sessionlistInner[event.list].items[event.item].color = event.color;
+    },
+  },
+  mounted() {
+    this.sessionlistInner = listInner.map(function (list) {
+      list.check = false;
+      list.items.forEach((item) => (item.check = false));
+      return list;
+    });
+  },
+  computed: {
+    lists() {
+      return this.sessionlistInner.filter((list) => list.check);
+    },
   },
 };
 </script>
